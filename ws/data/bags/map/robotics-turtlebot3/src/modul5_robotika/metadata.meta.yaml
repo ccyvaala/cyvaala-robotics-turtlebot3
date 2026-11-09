@@ -1,0 +1,5 @@
+experiment:
+  module: Modul 5 LIDAR IMU Odometry
+  robot: TurtleBot3 Burger
+  date: 2026-10-12
+  trials: 5
