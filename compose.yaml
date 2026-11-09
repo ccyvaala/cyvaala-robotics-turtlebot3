@@ -1,0 +1,43 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        UID: "${UID:-1000}"
+        GID: "${GID:-1000}"
+    image: robotics-lab:dev
+    container_name: robotics_dev
+    network_mode: host
+    ipc: host
+    environment:
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - QT_X11_NO_MITSHM=1
+      - DISPLAY=${DISPLAY}
+      - TURTLEBOT3_MODEL=burger
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-31}
+      - LIBGL_ALWAYS_SOFTWARE=1{LIBGL_ALWAYS_SOFTWARE:-0}
+    volumes:
+      - ../src:/ws/src
+      - ../config:/ws/config
+      - ../launch:/ws/launch
+      - ../data:/ws/data
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ws_build:/ws/build
+      - ws_install:/ws/install
+    stdin_open: true
+    tty: true
+
+  sim:
+    extends: dev
+    container_name: robotics_sim
+    profiles: ["sim"]
+    command: >
+      bash -lc "source /opt/ros/humble/setup.bash &&
+      ros2 launch turtlebot3_gazebo turtlebot3_world.launch.py"
+
+volumes:
+  ws_build:
+  ws_install:
+
+
